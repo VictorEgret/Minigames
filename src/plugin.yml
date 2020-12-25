@@ -1,0 +1,11 @@
+main: fr.greentor.dev.main
+name: Minigames
+version: '1.0'
+description: Plugin de mini jeux
+author: Greentor
+
+commands:
+  gamelist:
+
+  game:
+    description: Manage a game
