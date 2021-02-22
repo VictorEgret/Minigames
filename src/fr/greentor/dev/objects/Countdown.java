@@ -1,8 +1,6 @@
-package fr.greentor.dev;
+package fr.greentor.dev.objects;
 
 import org.bukkit.scheduler.BukkitRunnable;
-
-import static fr.greentor.dev.gameManager.gameMessage;
 
 public class Countdown extends BukkitRunnable {
 
@@ -21,10 +19,10 @@ public class Countdown extends BukkitRunnable {
     @Override
     public void run() {
         if (counter > 0) {
-            gameMessage(this.game, "La partie de " + this.game.getName() + " commence dans " + counter);
+            this.game.sendMessage("La partie de " + this.game.getName() + " commence dans " + counter);
             counter--;
         } else {
-            gameMessage(this.game, "La partie de " + this.game.getName() + " commence");
+            this.game.sendMessage("La partie de " + this.game.getName() + " commence");
             this.cancel();
         }
     }

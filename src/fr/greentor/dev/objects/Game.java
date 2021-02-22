@@ -1,32 +1,34 @@
-package fr.greentor.dev;
+package fr.greentor.dev.objects;
 
+import fr.greentor.dev.events.GameEndEvent;
+import fr.greentor.dev.events.GameStartEvent;
+import fr.greentor.dev.main;
+import fr.greentor.dev.managers.gameManager;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static fr.greentor.dev.gameManager.activesGames;
-import static fr.greentor.dev.gameManager.gameMessage;
+import static fr.greentor.dev.managers.gameManager.activesGames;
 
 public class Game {
 
     private final String[] gameStates = {"Lancée", "Lancement", "En attente", "Terminée"};
 
-    String name;
-    int maxPlayer;
-    int gameID = createID();
-    HashMap<Player, Integer> scores = new HashMap<>();
-    String gameState = gameStates[2];
-    GameMap map;
+    private final String name;
+    private final int maxPlayer;
+    private final int gameID = createID();
+    private HashMap<Player, Integer> scores = new HashMap<>();
+    private String gameState = gameStates[2];
+    private final GameMap map;
 
-    public GameMap getMap() {
-        return map;
-    }
-
-    public Game(String name, int maxPlayer){
+    public Game(String name, int maxPlayer, GameMap map){
         this.name = name;
         this.maxPlayer = maxPlayer;
+        this.map = map;
     }
 
     private int createID(){
@@ -40,6 +42,28 @@ public class Game {
 
     public int getGameID() {
         return gameID;
+    }
+
+    public void sendMessage(String message){
+        for (Player p : this.getScores().keySet()){
+            p.sendMessage(message);
+        }
+    }
+
+    public void sendTextComponent(TextComponent message){
+        for (Player p : this.getScores().keySet()){
+            p.spigot().sendMessage(message);
+        }
+    }
+
+    public void teleport(Location loc){
+        for (Player p : this.getScores().keySet()){
+            p.teleport(loc);
+        }
+    }
+
+    public GameMap getMap() {
+        return map;
     }
 
     public int getMaxPlayer() {
@@ -73,20 +97,24 @@ public class Game {
     public void startGame(boolean forceStart){
 
         this.setGameState(gameStates[1]);
-        gameMessage(this, "§aLa partie de " + this.getName() + " commence...");
+        this.sendMessage("§aLa partie de " + this.getName() + " commence...");
+        Bukkit.getServer().getPluginManager().callEvent(new GameStartEvent(this));
 
-        new Countdown(5, this).runTaskLater(main.getInstance(), 20);
+        new Countdown(5, this).runTaskTimer(main.getInstance(), 0, 20);
+
+        this.generateMap();
 
         if (forceStart){
 
         } else {
 
         }
+        this.teleport(this.map.getSpawns()[0]);
     }
 
     public void addPlayer(Player player){
         this.addScores(player, 0);
-        gameMessage(this, player.getName() + " à rejoint la partie de " + this.getName());
+        this.sendMessage(player.getName() + " à rejoint la partie de " + this.getName());
         if (this.getScores().size() >= 0.8 * this.getMaxPlayer()){
             startGame(false);
         }
@@ -101,7 +129,7 @@ public class Game {
     }
 
     public void removePlayer(Player player) {
-        gameMessage(this, player.getName() + " à quitté la partie de " + this.getName());
+        this.sendMessage(player.getName() + " à quitté la partie de " + this.getName());
         this.scores.remove(player);
         /*if (this.getScores().size() <= 1){
             this.endGame(false);
@@ -109,6 +137,7 @@ public class Game {
     }
 
     public void endGame(boolean forceEnd) {
+        Bukkit.getServer().getPluginManager().callEvent(new GameEndEvent(this));
         if (forceEnd){
             Bukkit.broadcastMessage("La partie de " + this.getName() + " a été terminée de force");
         } else {
@@ -116,5 +145,9 @@ public class Game {
             this.setGameState(gameStates[3]);
         }
         activesGames.remove(this);
+    }
+
+    public void generateMap(){
+        this.map.generate();
     }
 }

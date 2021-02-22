@@ -1,5 +1,8 @@
 package fr.greentor.dev;
 
+import fr.greentor.dev.managers.gameManager;
+import fr.greentor.dev.objects.Game;
+import fr.greentor.dev.objects.GameMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,7 +51,7 @@ public class commands implements CommandExecutor, Listener {
                             p.sendMessage("Veuillez spécifier le nom du jeu");
                         } else {
                             if (args[1].equalsIgnoreCase("OITC")){
-                                gameManager.createGame(new Game("One In The Chamber", 10));
+                                gameManager.createGame(new Game("One In The Chamber", 10, GameMap.TEST));
                             }
                         }
                     }
@@ -68,6 +71,7 @@ public class commands implements CommandExecutor, Listener {
                             }
                         }
                     }
+
                     if (args[0].equalsIgnoreCase("leave")) {
                         if (playerGame == null){
                             p.sendMessage("Vous n'etes dans aucune partie");
@@ -75,6 +79,7 @@ public class commands implements CommandExecutor, Listener {
                             playerGame.removePlayer(p);
                         }
                     }
+
                     if (args[0].equalsIgnoreCase("end")) {
                         if (playerGame == null){
                             if (args.length <= 1){
@@ -84,13 +89,14 @@ public class commands implements CommandExecutor, Listener {
                                 if (endGame == null){
                                     p.sendMessage("L'ID " + args[1] + " n'est pas attribué");
                                 } else {
-                                    endGame.endGame(true);
+                                    endGame.endGame(false);
                                 }
                             }
                         } else {
-                            playerGame.endGame(true);
+                            playerGame.endGame(false);
                         }
                     }
+
                     if (args[0].equalsIgnoreCase("start")) {
                         if (playerGame == null){
                             if (args.length <= 1){
@@ -100,11 +106,11 @@ public class commands implements CommandExecutor, Listener {
                                 if (startGame == null){
                                     p.sendMessage("L'ID " + args[1] + " n'est pas attribué");
                                 } else {
-                                    startGame.startGame(true);
+                                    startGame.startGame(false);
                                 }
                             }
                         } else {
-                            playerGame.startGame(true);
+                            playerGame.startGame(false);
                         }
                     }
                 }
