@@ -1,9 +1,10 @@
 package fr.greentor.dev.objects;
 
+import fr.greentor.dev.GameState;
 import fr.greentor.dev.events.GameEndEvent;
 import fr.greentor.dev.events.GameStartEvent;
-import fr.greentor.dev.main;
-import fr.greentor.dev.managers.gameManager;
+import fr.greentor.dev.Minigames;
+import fr.greentor.dev.managers.GameManager;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,18 +13,19 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static fr.greentor.dev.managers.gameManager.activesGames;
+import static fr.greentor.dev.managers.GameManager.activesGames;
 
 public class Game {
-
-    private final String[] gameStates = {"Lancée", "Lancement", "En attente", "Terminée"};
 
     private final String name;
     private final int maxPlayer;
     private final int gameID = createID();
     private HashMap<Player, Integer> scores = new HashMap<>();
-    private String gameState = gameStates[2];
+    private GameState gameState = GameState.WAITING;
     private final GameMap map;
+    private boolean pvp;
+    private boolean fallDamage;
+    private double killRegen;
 
     public Game(String name, int maxPlayer, GameMap map){
         this.name = name;
@@ -34,10 +36,34 @@ public class Game {
     private int createID(){
         int ID = ThreadLocalRandom.current().nextInt(0, 10000);
 
-        while (gameManager.findGameByID(ID) != null){
+        while (GameManager.findGameByID(ID) != null){
             ID = ThreadLocalRandom.current().nextInt(0, 10000);
         }
         return ID;
+    }
+
+    public double getKillRegen() {
+        return killRegen;
+    }
+
+    public void setKillRegen(double killRegen) {
+        this.killRegen = killRegen;
+    }
+
+    public boolean isPvp() {
+        return pvp;
+    }
+
+    public void setPvp(boolean pvp) {
+        this.pvp = pvp;
+    }
+
+    public boolean isFallDamage() {
+        return fallDamage;
+    }
+
+    public void setFallDamage(boolean fallDamage) {
+        this.fallDamage = fallDamage;
     }
 
     public int getGameID() {
@@ -70,11 +96,11 @@ public class Game {
         return maxPlayer;
     }
 
-    public String getGameState() {
+    public GameState getGameState() {
         return gameState;
     }
 
-    public void setGameState(String gameState) {
+    public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
@@ -96,13 +122,15 @@ public class Game {
 
     public void startGame(boolean forceStart){
 
-        this.setGameState(gameStates[1]);
+        this.setGameState(GameState.LAUNCHING);
         this.sendMessage("§aLa partie de " + this.getName() + " commence...");
         Bukkit.getServer().getPluginManager().callEvent(new GameStartEvent(this));
 
-        new Countdown(5, this).runTaskTimer(main.getInstance(), 0, 20);
+        new Countdown(5, this).runTaskTimer(Minigames.getInstance(), 0, 20);
 
         this.generateMap();
+
+        this.setGameState(GameState.LAUNCHED);
 
         if (forceStart){
 
@@ -113,10 +141,18 @@ public class Game {
     }
 
     public void addPlayer(Player player){
-        this.addScores(player, 0);
-        this.sendMessage(player.getName() + " à rejoint la partie de " + this.getName());
-        if (this.getScores().size() >= 0.8 * this.getMaxPlayer()){
-            startGame(false);
+        if (this.getScores().size() == this.getMaxPlayer()){
+            player.sendMessage("Impossible de rejoindre, la partie est complète");
+        } else if (this.gameState != GameState.WAITING){
+            player.sendMessage("Impossible de rejoindre, la partie est " + this.gameState.toString().toLowerCase());
+        } else if (GameManager.findGameByPlayer(player) != null){
+            player.sendMessage("Impossible de rejoindre, tu est déjà dans une partie");
+        } else {
+            this.addScores(player, 0);
+            this.sendMessage(player.getName() + " à rejoint la partie de " + this.getName());
+            if (this.getScores().size() >= 0.8 * this.getMaxPlayer()) {
+                startGame(false);
+            }
         }
     }
 
@@ -142,7 +178,7 @@ public class Game {
             Bukkit.broadcastMessage("La partie de " + this.getName() + " a été terminée de force");
         } else {
             Bukkit.broadcastMessage("La partie de " + this.getName() + " est terminée");
-            this.setGameState(gameStates[3]);
+            this.setGameState(GameState.FINISHED);
         }
         activesGames.remove(this);
     }

@@ -1,6 +1,7 @@
 package fr.greentor.dev;
 
-import fr.greentor.dev.managers.gameManager;
+import fr.greentor.dev.listeners.PlayerListener;
+import fr.greentor.dev.managers.GameManager;
 import fr.greentor.dev.objects.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,8 +12,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
-public class main extends JavaPlugin implements Listener{
-    private static main instance;
+public class Minigames extends JavaPlugin implements Listener{
+    private static Minigames instance;
 
     @Override
     public void onEnable(){
@@ -27,7 +28,7 @@ public class main extends JavaPlugin implements Listener{
     public void onDisable(){
     }
 
-    public static main getInstance() {
+    public static Minigames getInstance() {
         return instance;
     }
 
@@ -35,12 +36,12 @@ public class main extends JavaPlugin implements Listener{
         String[] commands = {"game", "gamelist"};
 
         for (String command : commands){
-            Objects.requireNonNull(getCommand(command)).setExecutor(new commands());
+            Objects.requireNonNull(getCommand(command)).setExecutor(new Commands());
         }
     }
 
     public void registerEvents() {
-        Listener[] listeners = {this};
+        Listener[] listeners = {this, new PlayerListener()};
 
         for (Listener listener : listeners) {
             Bukkit.getServer().getPluginManager().registerEvents(listener, this);
@@ -53,7 +54,7 @@ public class main extends JavaPlugin implements Listener{
         Player p = e.getPlayer();
         String message = e.getMessage();
 
-        Game playerGame = gameManager.findGameByPlayer(p);
+        Game playerGame = GameManager.findGameByPlayer(p);
 
         e.getFormat();
 

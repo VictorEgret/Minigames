@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class gameManager {
+public class GameManager {
 
     public static ArrayList<Game> activesGames = new ArrayList<>();
 

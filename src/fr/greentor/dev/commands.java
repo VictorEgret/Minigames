@@ -1,6 +1,6 @@
 package fr.greentor.dev;
 
-import fr.greentor.dev.managers.gameManager;
+import fr.greentor.dev.managers.GameManager;
 import fr.greentor.dev.objects.Game;
 import fr.greentor.dev.objects.GameMap;
 import org.bukkit.command.Command;
@@ -9,15 +9,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-public class commands implements CommandExecutor, Listener {
+public class Commands implements CommandExecutor, Listener {
 
-    private String gameMessage = "Commandes de gestion de jeux:\n" +
-                                 "/game create (gameName): Crééer une partie\n" +
-                                 "/game start (gameID): Démarrer la partie\n" +
-                                 "/game join (gameID): Rejoindre la partie\n" +
-                                 "/game leave: Quitter la partie\n" +
-                                 "/game end (gameID): Arreter la partie\n" +
-                                 "/game info (gameID): Donne les info sur la partie\n";
+    private final String gameMessage = "Commandes de gestion de jeux:\n" +
+            "/game create (gameName): Crééer une partie\n" +
+            "/game start (gameID): Démarrer la partie\n" +
+            "/game join (gameID): Rejoindre la partie\n" +
+            "/game leave: Quitter la partie\n" +
+            "/game end (gameID): Arreter la partie\n" +
+            "/game info (gameID): Donne les info sur la partie\n";
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
@@ -25,9 +25,9 @@ public class commands implements CommandExecutor, Listener {
             Player p = (Player) sender;
             //DEBUG COMMANDS
             if (cmd.getName().equalsIgnoreCase("gameList")) {
-                p.sendMessage(gameManager.activesGames.toString());
-                if (gameManager.activesGames.size() >= 1){
-                    p.sendMessage(gameManager.activesGames.get(0).getInfos());
+                p.sendMessage(GameManager.activesGames.toString());
+                if (GameManager.activesGames.size() >= 1){
+                    p.sendMessage(GameManager.activesGames.get(0).getInfos());
                 }
             }
 
@@ -37,7 +37,7 @@ public class commands implements CommandExecutor, Listener {
                     p.sendMessage(gameMessage);
                 } else {
 
-                    Game playerGame = gameManager.findGameByPlayer(p);
+                    Game playerGame = GameManager.findGameByPlayer(p);
 
                     if (args[0].equalsIgnoreCase("info")) {
                         if (playerGame == null){
@@ -51,7 +51,7 @@ public class commands implements CommandExecutor, Listener {
                             p.sendMessage("Veuillez spécifier le nom du jeu");
                         } else {
                             if (args[1].equalsIgnoreCase("OITC")){
-                                gameManager.createGame(new Game("One In The Chamber", 10, GameMap.TEST));
+                                GameManager.createGame(new Game("One In The Chamber", 10, GameMap.TEST));
                             }
                         }
                     }
@@ -59,11 +59,11 @@ public class commands implements CommandExecutor, Listener {
                         if (args.length <= 1){
                             p.sendMessage("Veuillez spécifier l'ID de la partie");
                         } else {
-                            Game joinGame = gameManager.findGameByID(new Integer(args[1]));
+                            Game joinGame = GameManager.findGameByID(new Integer(args[1]));
                             if (joinGame == null){
                                 p.sendMessage("L'ID " + args[1] + " n'est pas attribué");
                             } else {
-                                if (gameManager.findGameByPlayer(p) == null){
+                                if (GameManager.findGameByPlayer(p) == null){
                                     joinGame.addPlayer(p);
                                 } else {
                                     p.sendMessage("Tu est déjà dans une partie");
@@ -85,7 +85,7 @@ public class commands implements CommandExecutor, Listener {
                             if (args.length <= 1){
                                 p.sendMessage("Veuillez spécifier l'ID de la partie");
                             } else {
-                                Game endGame = gameManager.findGameByID(new Integer(args[1]));
+                                Game endGame = GameManager.findGameByID(new Integer(args[1]));
                                 if (endGame == null){
                                     p.sendMessage("L'ID " + args[1] + " n'est pas attribué");
                                 } else {
@@ -102,7 +102,7 @@ public class commands implements CommandExecutor, Listener {
                             if (args.length <= 1){
                                 p.sendMessage("Veuillez spécifier l'ID de la partie");
                             } else {
-                                Game startGame = gameManager.findGameByID(new Integer(args[1]));
+                                Game startGame = GameManager.findGameByID(new Integer(args[1]));
                                 if (startGame == null){
                                     p.sendMessage("L'ID " + args[1] + " n'est pas attribué");
                                 } else {
