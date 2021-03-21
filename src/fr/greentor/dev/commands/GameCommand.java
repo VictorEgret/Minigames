@@ -1,4 +1,4 @@
-package fr.greentor.dev;
+package fr.greentor.dev.commands;
 
 import fr.greentor.dev.managers.GameManager;
 import fr.greentor.dev.objects.Game;
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-public class Commands implements CommandExecutor, Listener {
+public class GameCommand implements CommandExecutor, Listener {
 
     private final String gameMessage = "Commandes de gestion de jeux:\n" +
             "/game create (gameName): Crééer une partie\n" +

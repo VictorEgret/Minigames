@@ -1,9 +1,8 @@
 package fr.greentor.dev.objects;
 
-import fr.greentor.dev.GameState;
+import fr.greentor.dev.Minigames;
 import fr.greentor.dev.events.GameEndEvent;
 import fr.greentor.dev.events.GameStartEvent;
-import fr.greentor.dev.Minigames;
 import fr.greentor.dev.managers.GameManager;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -187,3 +186,21 @@ public class Game {
         this.map.generate();
     }
 }
+
+enum GameState {
+    LAUNCHED("Lancée"),
+    LAUNCHING("En lancement"),
+    WAITING("En attente"),
+    FINISHED("Terminée");
+
+    private final String toString;
+
+    GameState(String toString){
+        this.toString = toString;
+    }
+
+    public String toString(){
+        return this.toString;
+    }
+}
+

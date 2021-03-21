@@ -9,9 +9,9 @@ import org.bukkit.World;
 public enum GameMap {
 
     TEST(new Location[]{new Location(Bukkit.getWorld("world"), 0, 75, 0), new Location(null, 50, 100, 50)},
-         new Location[]{new Location(Bukkit.getWorld("world"), 0, 75, 0)},
-         maps.getTestMap(),
-         "OITC" );
+            new Location[]{new Location(Bukkit.getWorld("world"), 0, 75, 0)},
+            maps.getTestMap(),
+            "OITC" );
 
     Location[] corners;
     Location[] spawns;

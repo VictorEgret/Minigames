@@ -1,5 +1,6 @@
 package fr.greentor.dev;
 
+import fr.greentor.dev.commands.GameCommand;
 import fr.greentor.dev.listeners.PlayerListener;
 import fr.greentor.dev.managers.GameManager;
 import fr.greentor.dev.objects.Game;
@@ -36,7 +37,7 @@ public class Minigames extends JavaPlugin implements Listener{
         String[] commands = {"game", "gamelist"};
 
         for (String command : commands){
-            Objects.requireNonNull(getCommand(command)).setExecutor(new Commands());
+            Objects.requireNonNull(getCommand(command)).setExecutor(new GameCommand());
         }
     }
 

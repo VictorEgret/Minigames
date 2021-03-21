@@ -19,11 +19,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://C:/SSD Servers/Serveur 1.16.4/spigot-1.16.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Dev stuff/Minecraft dev/Librairies/spigot-1.16.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://C:/SSD Servers/Serveur 1.16.4/spigot-1.16.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Dev stuff/Minecraft dev/Librairies/spigot-1.16.5.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
